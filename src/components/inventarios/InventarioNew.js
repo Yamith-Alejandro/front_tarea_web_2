@@ -87,7 +87,7 @@ export const InventarioNew = ({ handleOpenModal, listarInventarios }) => {
             tipo_equipo:{_id: tipo_equipo},
             estado_equipo:{ _id: estado_equipo}            
         }
-        console.log(inventario);
+        
         try {
             Swal.fire({
                 allowOutsideClick:false,
@@ -100,8 +100,15 @@ export const InventarioNew = ({ handleOpenModal, listarInventarios }) => {
             handleOpenModal();
             listarInventarios();            
         } catch (error) {
-            console.log(error);
-            Swal.close();            
+            console.log(error);            
+            Swal.close(); 
+            let mensaje;
+            if(error && error.response && error.response.data){
+                mensaje= error.response.data;
+            }else{
+                mensaje= 'Ocurrio un error, porfavor verifique su conexion e intente de nuevo';
+            }
+            Swal.fire('error',mensaje, 'error');           
         }
     }
 

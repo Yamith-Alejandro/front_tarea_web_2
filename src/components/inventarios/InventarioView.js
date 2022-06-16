@@ -1,25 +1,32 @@
-import React, { useState, useEffect } from 'react'
-import { getInventarios } from '../../services/inventarioService'
-import { InventarioCard } from './InventarioCard'
-import { InventarioNew } from './InventarioNew'
+import React, { useState, useEffect } from 'react';
+import { getInventarios } from '../../services/inventarioService';
+import { InventarioCard } from './InventarioCard';
+import { InventarioNew } from './InventarioNew';
+import Swal from 'sweetalert2';
 
 export const InventarioView = () => {
   const [inventarios, setInventarios] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const listarInventarios = async () => {
     try {
+      Swal.fire({
+        allowOutsideClick: false,
+        text: '...Cargando...'
+      });
+      Swal.showLoading();
       const { data } = await getInventarios();
       console.log(data);
       setInventarios(data);
-
+      Swal.close();
     } catch (error) {
       console.log(error);
+      Swal.close();
     }
   }
   useEffect(() => {
     listarInventarios();
   }, []);
-  const handleOpenModal =() =>{
+  const handleOpenModal = () => {
     setOpenModal(!openModal)
   }
 
@@ -33,12 +40,12 @@ export const InventarioView = () => {
         }
       </div>
       {
-        openModal ? <InventarioNew 
-         handleOpenModal={handleOpenModal}
-         listarInventarios={listarInventarios} /> :
-        (<button className='btn btn-primary fab' onClick={handleOpenModal}>
-        <i className="fa-solid fa-plus"></i>
-        </button>)
+        openModal ? <InventarioNew
+          handleOpenModal={handleOpenModal}
+          listarInventarios={listarInventarios} /> :
+          (<button className='btn btn-primary fab' onClick={handleOpenModal}>
+            <i className="fa-solid fa-plus"></i>
+          </button>)
       }
 
     </div>

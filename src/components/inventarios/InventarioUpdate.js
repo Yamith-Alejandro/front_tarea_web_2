@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { getInventarioPorId } from '../../services/inventarioService';
+import { getInventarioPorId, editInventarios } from '../../services/inventarioService';
 import { getUsuarios } from '../../services/UsuarioService';
 import { getEstado } from '../../services/EstadoService';
 import { getMarca } from '../../services/MarcaService';
 import { getTipo } from '../../services/TipoService';
+import Swal from 'sweetalert2';
 
 export const InventarioUpdate = () => {
 
@@ -76,20 +77,27 @@ export const InventarioUpdate = () => {
 
     const getInventario = async () => {
         try {
+            Swal.fire({
+                allowOutsideClick: false,
+                text: '...Cargando...'
+              });
+              Swal.showLoading();
             const { data } = await getInventarioPorId(inventarioId);
             console.log(data);
             setInventario(data);
+            Swal.close();
         } catch (error) {
             console.log(error);
+            Swal.close();
         }
     }
 
     useEffect(() => {
         getInventario();
-    }, [inventarioId]);
+    },[inventarioId]);
 
     useEffect(() => {
-        
+
         setValoresForm({
             serial: inventario.serial,
             modelo: inventario.modelo,
@@ -113,6 +121,34 @@ export const InventarioUpdate = () => {
 
     const handleOnSubmit = async (e) => {
         e.preventDefault();
+        const inventario = {
+            serial, modelo, descripcion, color, foto, fecha_compra, precio,
+            usuario: { _id: usuario },
+            marca: { _id: marca },
+            tipo_equipo: { _id: tipo_equipo },
+            estado_equipo: { _id: estado_equipo }
+        }
+        try {
+            Swal.fire({
+                allowOutsideClick: false,
+                text: '...Cargando...'
+            });
+            Swal.showLoading();
+            const { data } = await editInventarios(inventarioId, inventario);
+            console.log(data);
+            Swal.close();
+        } catch (error) {
+            console.log(error);
+            console.log(error.response.data);
+            Swal.close();
+            let mensaje;
+            if(error && error.response && error.response.data){
+                mensaje= error.response.data;
+            }else{
+                mensaje= 'Ocurrio un error, porfavor verifique su conexion e intente de nuevo';
+            }
+            Swal.fire('error',mensaje, 'error');
+        }
     }
 
     return (
@@ -124,7 +160,7 @@ export const InventarioUpdate = () => {
                 <div className='card-body'>
                     <div className='row'>
                         <div className='col-md-3'>
-                            <img src={inventario?.foto}></img>
+                            <img src={inventario?.foto} height={320} width={240} alt='Imagenes de articulos'></img>
                         </div>
                         <div className='col-md-9'>
 
@@ -186,7 +222,7 @@ export const InventarioUpdate = () => {
                                     <div className='col'>
                                         <div className="mb-3">
                                             <label className="form-label">Fecha Compra</label>
-                                            <input type="date" name='fecha_compra'
+                                            <input type="datetime" name='fecha_compra'
                                                 required
                                                 value={fecha_compra}
                                                 onChange={(e) => { handleOnChange(e) }}
