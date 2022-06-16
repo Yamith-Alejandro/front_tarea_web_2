@@ -19,7 +19,7 @@ export const InventarioView = () => {
   useEffect(() => {
     listarInventarios();
   }, []);
-  const handleOpenModal = () =>{
+  const handleOpenModal =() =>{
     setOpenModal(!openModal)
   }
 
@@ -33,7 +33,9 @@ export const InventarioView = () => {
         }
       </div>
       {
-        openModal ? <InventarioNew handleOpenModal={handleOpenModal}  /> :
+        openModal ? <InventarioNew 
+         handleOpenModal={handleOpenModal}
+         listarInventarios={listarInventarios} /> :
         (<button className='btn btn-primary fab' onClick={handleOpenModal}>
         <i className="fa-solid fa-plus"></i>
         </button>)
