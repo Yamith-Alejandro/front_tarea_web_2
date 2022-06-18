@@ -10,8 +10,23 @@ const getUsuarios=()=>{
     })
 }
 
-//todo crear, actualizar...
+const crearUsuarios= (data)=>{
+    return axiosInstance.post('usuario',data, {
+        headers : {
+            'Content-type': 'application/json'
+        }
+    });    
+}
+
+const editUsuarios= (usuarioId,data)=>{
+    return axiosInstance.put(`usuario/${usuarioId}`, data, {
+        headers : {
+            'Content-type': 'application/json'
+        }
+    });    
+}
+
 
 export{
-    getUsuarios
+    getUsuarios, crearUsuarios,editUsuarios
 }
